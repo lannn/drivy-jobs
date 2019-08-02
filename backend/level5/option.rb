@@ -3,7 +3,7 @@ class Option
 
   def initialize(params)
     @id = params[:id].to_i
-    @rental_id = params[:rental_id]
+    @rental_id = params[:rental_id].to_i
     @type = params[:type]
   end
 

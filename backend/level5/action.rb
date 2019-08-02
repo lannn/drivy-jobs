@@ -18,16 +18,15 @@ class Action
   def amount
     case actor
     when "driver"
-      rental.price +
-        rental.options.inject(0) { |sum, option| sum + option.price * rental.number_of_days }
+      rental.price + total_price_for_options
     when "owner"
-      rental.price * 70 / 100 + amount_for_other_options
+      rental.price * 70 / 100 + owner_amount_from_options
     when "insurance"
       rental.commission.insurance_fee
     when "assistance"
       rental.commission.assistance_fee
     when "drivy"
-      rental.commission.drivy_fee + additional_insurance_amount
+      rental.commission.drivy_fee + drivy_amount_from_options
     end
   end
 
@@ -35,17 +34,23 @@ class Action
 
   attr_reader :rental
 
-  def amount_for_other_options
+  def total_price_for_options
+    rental
+      .options
+      .inject(0) { |sum, option| sum + option.price * rental.number_of_days }
+  end
+
+  def owner_amount_from_options
     rental
       .options
       .select { |option| ["gps", "baby_seat"].include?(option.type) }
       .inject(0) { |sum, option| sum + option.price * rental.number_of_days }
   end
 
-  def additional_insurance_amount
+  def drivy_amount_from_options
     rental
       .options
-      .select { |option| option.type == "additional_insurance" }
+      .select { |option| ["additional_insurance"].include?(option.type) }
       .inject(0) { |sum, option| sum + option.price * rental.number_of_days }
   end
 end
