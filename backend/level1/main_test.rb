@@ -1,5 +1,6 @@
 require "test/unit"
-require "./main"
+require "./car.rb"
+require "./rental.rb"
 
 class MainTest < Test::Unit::TestCase
   def test_price_for_a_rental
